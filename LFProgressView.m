@@ -32,12 +32,12 @@
         self.backgroundColor = [UIColor clearColor];
         self.backgroundBarColor = backgroundBarColor;
         self.progressBarColor = progressBarColor;
-        
+
         [self.layer addSublayer:self.progressBarLayer];
-        
+
         [self setNeedsDisplay];
     }
-    
+
     return self;
 }
 
@@ -49,17 +49,17 @@
         self.progressBarColor = [UIColor greenColor];
         self.insideWith = 2;
         self.duration = 2;
-        
+
         [self.layer addSublayer:self.progressBarLayer];
-        
+
         [self setNeedsDisplay];
     }
-    
+
     return self;
 }
 
 - (void)drawRect:(CGRect)rect {
-    
+
     UIBezierPath * backGourndBar = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:CGRectGetHeight(rect)*0.5];
     [self.backgroundBarColor set];
     [backGourndBar fill];
@@ -68,26 +68,25 @@
 - (void)setRatio:(CGFloat)ratio animated:(BOOL)animated {
     self.ratio = ratio;
     self.animated = animated;
-    
-    CGFloat x = CGRectGetHeight(self.frame)*0.5;
-    CGFloat width = CGRectGetWidth(self.frame) - x;
+
+    CGFloat x = CGRectGetWidth(self.frame) * self.ratio;
     CGFloat height = CGRectGetHeight(self.frame) - self.insideWith*2;
     CGFloat centerY = CGRectGetHeight(self.frame) * 0.5;
     UIBezierPath * path = [UIBezierPath bezierPath];
 
-    [path moveToPoint:(CGPointMake(x, centerY))];
-    [path addLineToPoint:(CGPointMake(width, centerY))];
-    
+    [path moveToPoint:(CGPointMake(0, centerY))];
+    [path addLineToPoint:(CGPointMake(x, centerY))];
+
     self.progressBarLayer.path = path.CGPath;
     self.progressBarLayer.lineWidth = height;
     self.progressBarLayer.strokeColor = self.progressBarColor.CGColor;
     self.progressBarLayer.lineCap = kCALineCapRound;  // 圆角需要在这里设置才行
-    
+
     if (animated) {
         [self setAnimation];
     }
-    
-    
+
+
 }
 
 - (void)setAnimation {
@@ -95,7 +94,7 @@
     animation.duration = self.duration;
     animation.fromValue = [NSNumber numberWithFloat:0.0f];
     animation.toValue = [NSNumber numberWithFloat:self.ratio];
-    
+
     animation.removedOnCompletion = NO;
     animation.fillMode = kCAFillModeForwards;
     [self.progressBarLayer addAnimation:animation forKey:@"strokeEndAnimation"];
@@ -111,20 +110,20 @@
     if (!_progressBarLayer) {
         _progressBarLayer = [[CAShapeLayer alloc]init];
     }
-    
+
     return _progressBarLayer;
 }
 
 #pragma mark - setter & getter
 - (void)setBackgroundBarColor:(UIColor *)backgroundBarColor {
     _backgroundBarColor = backgroundBarColor;
-    
+
     [self setNeedsDisplay];
 }
 
 - (void)setInsideWith:(CGFloat)insideWith {
     _insideWith = insideWith;
-    
+
     [self setRatio:self.ratio animated:self.animated];
 }
 
